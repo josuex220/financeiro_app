@@ -10,43 +10,72 @@ import {
     StackedBarChart
   } from 'react-native-chart-kit'
 import {Entypo, Feather, Ionicons, AntDesign} from '@expo/vector-icons';
-
+const getList = async (accountId) => {
+    const res = await fetch('https://api.wdwebdesign.com.br/card/getTransactions/11/'+accountId);
+    if (!res.ok) {
+        // throw new Error(`${res.status}: ${await res.text()}`)
+      }
+      return res.json();
+  } 
 
 export default function Card({ colorCard = '#2A64D9', colorLogo='#2355BA', onPress,binCard, myName, cardName, accountId}){
-    const [infos, setInfos] = useState([]);
-    
-        fetch(`https://api.wdwebdesign.com.br/card/getTransactions/11/${accountId}`)
-        .then(response => response.json())
-        .then(response => {
-            var infoResponse = [];
-            for (let i = 0; i < response.length; i++) {
-                const element = response[i];  
-                console.log(element);          
-                infoResponse.push(<View style={[allStyle.cardCollumn,allStyle.marginY, allStyle.budgeCard]}>
+    const [listInfos, setInfos] = useState([]);
+        React.useEffect(() => {
+            getList(accountId)
+            .then(setInfos)
+            .catch();
+        },[]);
+        var movimentacao = [];
+    if(listInfos){
+        for (let i = 0; i < listInfos?.deposit?.length; i++) {
+            const element = listInfos?.deposit[i];
+            let date = new Date(element.date_start).toLocaleTimeString('en-US', { hour12: false, 
+                hour: "numeric", 
+                minute: "numeric"});
+                movimentacao.push((<View key={i} style={[allStyle.cardCollumn,allStyle.marginY, allStyle.budgeCard]}>
+                                <View style={allStyle.encapsuCircle}>
+                                    <View style={[allStyle.circleProfilerBudge, allStyle.greenCircle]}></View>
+                                </View>
+                                <View style={allStyle.infosBudgeCart}>
+                                    <View style={allStyle.cardBudgeText}>
+                                        <Text style={allStyle.titleCardBudge}>{element.description}</Text>
+                                        <Text style={[allStyle.contentCardBudge, allStyle.colorGreen]}>R${element.value}</Text>
+                                    </View>
+                                    <View style={allStyle.cardBudgeTextBase}>
+                                        <Text style={allStyle.titleCardBudgeBase}>Next</Text>
+                                        <Text style={allStyle.contentCardBudgeBase}>{date}</Text>
+                                    </View>
+                                </View>
+                            </View>));
+        }
+        for (let i2 = 0; i2 < listInfos?.cashout?.length; i2++) {
+            const element1 = listInfos?.cashout[i2];
+            let date2 = new Date(element1.date_start).toLocaleTimeString('en-US', { hour12: false, 
+                hour: "numeric", 
+                minute: "numeric"});
+                movimentacao.push((<View style={[allStyle.cardCollumn,allStyle.marginY, allStyle.budgeCard]}>
                                     <View style={allStyle.encapsuCircle}>
-                                        <View style={allStyle.circleProfilerBudge}></View>
+                                        <View style={[allStyle.circleProfilerBudge, allStyle.redCircle]}></View>
                                     </View>
                                     <View style={allStyle.infosBudgeCart}>
                                         <View style={allStyle.cardBudgeText}>
-                                            <Text style={allStyle.titleCardBudge}>Internet</Text>
-                                            <Text style={[allStyle.contentCardBudge, allStyle.colorRed]}>-R$100,00</Text>
+                                            <Text style={allStyle.titleCardBudge}>{element1.description}</Text>
+                                            <Text style={[allStyle.contentCardBudge, allStyle.colorRed]}>-R${element1.value}</Text>
                                         </View>
                                         <View style={allStyle.cardBudgeTextBase}>
                                             <Text style={allStyle.titleCardBudgeBase}>Next</Text>
-                                            <Text style={allStyle.contentCardBudgeBase}>03:00 PM</Text>
+                                            <Text style={allStyle.contentCardBudgeBase}>{date2}</Text>
                                         </View>
                                     </View>
-                                </View>);
-            }
-            setInfos(infoResponse);
-        });
-    
-    
+                                </View>));
+        }
+    }
+    console.log(movimentacao);
     return (
         <View>
             <View style={[style.card, {backgroundColor:colorCard}]}>
                 <View style={{flexDirection:'row'}}>
-                    <Text style={[style.margin21,{color:'white'}]}>********* ****</Text>
+                    <Text style={[style.margin21,{color:'white'}]}>********** ****</Text>
                     <View style={[style.logoCard, {backgroundColor:colorLogo, marginLeft:'auto', marginRight:10, marginTop:12, alignItems:"center" ,justifyContent:'center'}]}>
                         <Text style={{ fontSize:11, fontWeight:'bold', color:'#fff'}}>{cardName}</Text>
                     </View>
@@ -60,8 +89,10 @@ export default function Card({ colorCard = '#2A64D9', colorLogo='#2355BA', onPre
                 </View>
             </View>
             <View style={[allStyle.container]}>
-                <View style={[allStyle.cardCollumnFinance,allStyle.marginY, allStyle.budgeCardFinance]}>
-                        <View><ProgressChart
+            <View style={[allStyle.cardCollumnFinance,allStyle.marginY, allStyle.budgeCardFinance]}>
+                    <Text style={[{left:15, top:15, color:'#8D9096', position:'absolute'}]}>Debito</Text>
+                        <View>
+                            <ProgressChart
                             data={{
                                 data: [0.2]
                             }}
@@ -85,6 +116,7 @@ export default function Card({ colorCard = '#2A64D9', colorLogo='#2355BA', onPre
                                 <Text style={{fontSize:14, color: '#26272A'}}>R$ 3.900,00</Text>
                                 <Text style={{fontSize:10, color:'#8D9096'}}>Restante</Text>
                             </View>
+                            
                         </View>
                         <View style={[allStyle.cardCollumnStatus]}>
                             <View style={[allStyle.cardStatus]}>
@@ -97,46 +129,14 @@ export default function Card({ colorCard = '#2A64D9', colorLogo='#2355BA', onPre
                             </View>
                         </View>
                     </View>
+                    
                     <View style={[allStyle.marginY]}>
-                        <Text style={allStyle.labelTitle}>Hoje</Text>
+                        <Text style={allStyle.labelTitle}>Movimentações</Text>
                             {/* Cart Gastos */}
-                            <View style={[allStyle.cardCollumn,allStyle.marginY, allStyle.budgeCard]}>
-                                <View style={allStyle.encapsuCircle}>
-                                    <View style={allStyle.circleProfilerBudge}></View>
-                                </View>
-                                <View style={allStyle.infosBudgeCart}>
-                                    <View style={allStyle.cardBudgeText}>
-                                        <Text style={allStyle.titleCardBudge}>Internet</Text>
-                                        <Text style={[allStyle.contentCardBudge, allStyle.colorRed]}>-R$100,00</Text>
-                                    </View>
-                                    <View style={allStyle.cardBudgeTextBase}>
-                                        <Text style={allStyle.titleCardBudgeBase}>Next</Text>
-                                        <Text style={allStyle.contentCardBudgeBase}>03:00 PM</Text>
-                                    </View>
-                                </View>
-                            </View>
+                            {movimentacao}
                             {/* Cart Gastos Fim */}
                     </View>
-                    <View style={[allStyle.marginY]}>
-                        <Text style={allStyle.labelTitle}>Ontem</Text>
-                            {/* Cart Gastos */}
-                            <View style={[allStyle.cardCollumn,allStyle.marginY, allStyle.budgeCard]}>
-                                    <View style={allStyle.encapsuCircle}>
-                                        <View style={allStyle.circleProfilerBudge}></View>
-                                    </View>
-                                    <View style={allStyle.infosBudgeCart}>
-                                        <View style={allStyle.cardBudgeText}>
-                                            <Text style={allStyle.titleCardBudge}>Internet</Text>
-                                            <Text style={[allStyle.contentCardBudge, allStyle.colorRed]}>-R$100,00</Text>
-                                        </View>
-                                        <View style={allStyle.cardBudgeTextBase}>
-                                            <Text style={allStyle.titleCardBudgeBase}>Next</Text>
-                                            <Text style={allStyle.contentCardBudgeBase}>03:00 PM</Text>
-                                        </View>
-                                    </View>
-                                </View>
-                            {/* Cart Gastos Fim */}
-                    </View>
+                   
         </View>
         </View>
     );
@@ -165,6 +165,7 @@ const style = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+    
     touchable: {
       justifyContent: 'center',
       width: 48,
@@ -205,6 +206,12 @@ const allStyle = StyleSheet.create({
         fontSize:13,
         fontWeight:'600',
         color:'#26272A'
+    },
+    redCircle:{
+        backgroundColor:'#f44336'
+    },
+    greenCircle:{
+        backgroundColor:'#4caf50'
     },
     bodyScroll:{
         paddingBottom:20

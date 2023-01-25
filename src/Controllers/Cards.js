@@ -19,41 +19,47 @@ import {
     StackedBarChart
   } from 'react-native-chart-kit'
   import Swiper from 'react-native-swiper'
-  
+  const getList = async () => {
+    const res = await fetch('https://api.wdwebdesign.com.br/card/getAll/11');
+    if (!res.ok) {
+        throw new Error(`${res.status}: ${await res.text()}`)
+      }
+      return res.json();
+  } 
+ 
   export default function Cards(){
-    const createTwoButtonAlert = () =>
-            Alert.alert('Alert Title', 'My Alert Msg', [
-            {
-                text: 'Cancel',
-                onPress: () => console.log('Cancel Pressed'),
-                style: 'cancel',
-            },
-            {text: 'OK', onPress: () => console.log('OK Pressed')},
-            ]);
+   
 
         const width = Dimensions.get('window').width-30;
         
-        const [cards, setCards] = useState([]);
-        fetch(`https://api.wdwebdesign.com.br/card/getAll/11`)
-        .then(response => response.json())
-        .then(response => {
-            var cardsResponse = [];
-            for (let i = 0; i < response.length; i++) {
-                const element = response[i];            
-                cardsResponse.push(<Card
-                    key={i}
-                    accountId={element.id_account}
-                    binCard={element.last_six}
-                    myName={element.holder}
-                    cardName={element.card_bank}
-                    colorCard={element.color}
-                    colorLogo={element.colorLogo}
-                />);
-            }
-            setCards(cardsResponse)
-        })
-        .catch(err => console.error(err));
+        // fetch(`https://api.wdwebdesign.com.br/card/getAll/11`)
+        // .then(response => response.json())
+        // .then(response => {
+        //     var cardsResponse = [];
+        //     for (let i = 0; i < response.length; i++) {
+        //         const element = response[i];            
+        //         cardsResponse.push(<Card
+        //             key={i}
+        //             accountId={element.id_account}
+        //             binCard={element.last_six}
+        //             myName={element.holder}
+        //             cardName={element.card_bank}
+        //             colorCard={element.color}
+        //             colorLogo={element.colorLogo}
+        //         />);
+        //     }
+        //     setCards(cardsResponse)
+        // })
+        // .catch(err => console.error(err));
         
+        const [listCards, setCards] = useState([]);
+        React.useEffect(() => {
+            getList()
+            .then(setCards)
+            .catch(console.error);
+        },[]);
+        // console.log(listCards)
+
         StatusBar.setBarStyle('dark-content', true);
         let app =
                 <SafeAreaView style={allStyle.body}>
@@ -70,16 +76,26 @@ import {
                             </View>
 
                             
-                            <View style={[{flex:1},allStyle.marginT]}>
+                            <View style={[allStyle.marginT,{paddingBottom:70}]}>
                                  
                                     <Swiper 
                                             style={styles.wrapper} 
                                             showsPagination={false} 
-                                            loop={true} 
+                                            loop={false} 
                                             showsButtons={false}
-                                            height='100%'
+                                            height="100%"
                                             >
-                                        {cards}
+                                        { listCards.map((element, i ) => (
+                                            <Card
+                                                key={i}
+                                                accountId={element.id_account}
+                                                binCard={element.last_six}
+                                                myName={element.holder}
+                                                cardName={element.card_bank}
+                                                colorCard={element.color}
+                                                colorLogo={element.colorLogo}
+                                            />
+                                        ))}
                                     </Swiper>
                                
                             </View>
@@ -129,6 +145,7 @@ const styles = StyleSheet.create({
     }
   })
 const allStyle = StyleSheet.create({
+    
     titleCardBudge:{
         fontSize:13,
         fontWeight:'600',

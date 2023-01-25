@@ -79,12 +79,12 @@ import {
                                     </View>
                                 </View>
                             </View>
-                            <View style={[allStyle.marginY]}>
+                            <View style={[allStyle.marginY, {paddingBottom:70}]}>
                                 <Text style={allStyle.labelTitle}>Hoje</Text>
                                     {/* Cart Gastos */}
                                     <View style={[allStyle.cardCollumn,allStyle.marginY, allStyle.budgeCard]}>
                                             <View style={allStyle.encapsuCircle}>
-                                                <View style={allStyle.circleProfilerBudge}></View>
+                                                <View style={[allStyle.circleProfilerBudge, allStyle.redCircle]}></View>
                                             </View>
                                             <View style={allStyle.infosBudgeCart}>
                                                 <View style={allStyle.cardBudgeText}>
@@ -101,7 +101,7 @@ import {
                                     {/* Cart Gastos */}
                                         <View style={[allStyle.cardCollumn,allStyle.marginYT, allStyle.budgeCard]}>
                                             <View style={allStyle.encapsuCircle}>
-                                                <View style={allStyle.circleProfilerBudge}></View>
+                                                <View style={[allStyle.circleProfilerBudge, allStyle.greenCircle]}></View>
                                             </View>
                                             <View style={allStyle.infosBudgeCart}>
                                                 <View style={allStyle.cardBudgeText}>
@@ -118,7 +118,7 @@ import {
                                     {/* Cart Gastos */}
                                     <View style={[allStyle.cardCollumn,allStyle.marginYT, allStyle.budgeCard]}>
                                             <View style={allStyle.encapsuCircle}>
-                                                <View style={allStyle.circleProfilerBudge}></View>
+                                                <View style={[allStyle.circleProfilerBudge, allStyle.redCircle]}></View>
                                             </View>
                                             <View style={allStyle.infosBudgeCart}>
                                                 <View style={allStyle.cardBudgeText}>
@@ -135,7 +135,7 @@ import {
                                     {/* Cart Gastos */}
                                     <View style={[allStyle.cardCollumn,allStyle.marginYT, allStyle.budgeCard]}>
                                             <View style={allStyle.encapsuCircle}>
-                                                <View style={allStyle.circleProfilerBudge}></View>
+                                                <View style={[allStyle.circleProfilerBudge, allStyle.redCircle]}></View>
                                             </View>
                                             <View style={allStyle.infosBudgeCart}>
                                                 <View style={allStyle.cardBudgeText}>
@@ -170,6 +170,12 @@ const styles = StyleSheet.create({
     }
   })
 const allStyle = StyleSheet.create({
+    redCircle:{
+        backgroundColor:'#f44336'
+    },
+    greenCircle:{
+        backgroundColor:'#4caf50'
+    },
     titleCardBudge:{
         fontSize:13,
         fontWeight:'600',
