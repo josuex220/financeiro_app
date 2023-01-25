@@ -1,20 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React,{ useState } from 'react';
+import AppLoading from "expo-app-loading";
+import { useFonts } from "expo-font";
+import { NavigationContainer } from '@react-navigation/native';
+import Routes from './src/routes';
+import Login from './src/Controllers/Login';
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    const [screen, setScreen] = useState(0);
+    const [fontsLoaded] = useFonts({
+        'GIlroyLight' : require('./assets/fonts/GilroyLight.otf'),
+        'GilroyExtraBold' : require('./assets/fonts/GilroyExtraBold.otf'),
+        'GilroyMedium' : require('./assets/fonts/Gilroy-Medium.ttf'),
+        'GilroyRegular' : require('./assets/fonts/Gilroy-Regular.ttf'),
+        'GilroySemiBold' : require('./assets/fonts/Gilroy-SemiBold.ttf'),
+    });
+
+    if(!fontsLoaded){
+        return (
+            <AppLoading/>
+        )
+    }else{
+        
+        // return (<Login/>)
+        
+        return (
+            <NavigationContainer>
+                <Routes/>
+            </NavigationContainer>
+        );
+    }
+    //Routes
+  
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+
