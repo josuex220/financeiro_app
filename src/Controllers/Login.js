@@ -4,11 +4,43 @@ import ButtonCustom from './ButtonCustom';
 import Textdivider from '../Components/Textdivider';
 import Social from '../Components/Social';
 import { useFonts } from "expo-font";
-import {Text, StyleSheet, SafeAreaView, View, TextInput, Button} from 'react-native';
+import {Text, StyleSheet, SafeAreaView, View, TextInput, Alert} from 'react-native';
 
 import {Entypo, Feather, Fontisto, Ionicons} from '@expo/vector-icons';
+var email, password = false;
+const createAlert = (title, message) =>
+    Alert.alert(title, message, [
+      {text: 'Ok', onPress: () => console.log('OK Pressed')},
+    ]);
+
+function setLogin(event){
+    let form = new FormData();
+    form.append('email', email);
+    form.append('password', password);
+    console.log(form);
+    fetch('https://api.wdwebdesign.com.br/customer/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        body: form,
+      }).then( response => response.json())
+      .then(json => {
+        console.log(json);
+        if(json?.code != 200 && json?.message){
+            createAlert('Erro', json.message)
+        }else if(json.access_token){
+            
+        }else{
+            createAlert('Erro', 'Erro não indentificado');
+        }
+      }).catch(error => {
+        console.log(error);
+      });
+}
 
 export default function Login(){
+    
     const [fontsLoaded] = useFonts({
         'GIlroyLight' : require('../../assets/fonts/GilroyLight.otf'),
         'GilroyExtraBold' : require('../../assets/fonts/GilroyExtraBold.otf'),
@@ -35,6 +67,7 @@ export default function Login(){
                                 <TextInput 
                                     style={[allStyle.textInput,{fontFamily:'GilroyMedium', fontSize:12, flex:1}]}
                                     placeholder="Seu Email"
+                                    onChangeText={(text) => { email = text }}
                                     />
                             </View>
                         </View>
@@ -45,16 +78,17 @@ export default function Login(){
                                 <TextInput 
                                     style={[allStyle.textInput,{fontFamily:'GilroyMedium', fontSize:12, flex:1}]}
                                     placeholder="Sua Senha"
+                                    onChangeText={(text) => { password = text }}
                                     />
                                 <Ionicons style={{paddingRight:12}} name='eye-off-outline' size={16} color={'#667085'}/>
                             </View>
                         </View>
                         <View style={[{marginTop:64}]}>
                             <ButtonCustom
-                                onPress={()=>setScreen(2)}
+                                onPress={(el)=>setLogin(el)}
                                 title="Login"/>
                         </View>
-                        <Textdivider 
+                        {/* <Textdivider 
                             title="Ou"
                             lineColor="#CDCED1"
                         />
@@ -62,7 +96,7 @@ export default function Login(){
                             <Social icon={<Fontisto name='facebook' size={30} color={'#1877F2'}/>}/>
                             <Social icon={<Ionicons name='logo-google' size={30} color={'#EA4335'}/>}/>
                             <Social icon={<Ionicons name='logo-linkedin' size={30} color={'#0A66C2'}/>}/>
-                        </View>
+                        </View> */}
                     </View>
                 </View>
             </SafeAreaView>
@@ -83,7 +117,6 @@ const allStyle = StyleSheet.create({
         margin: 8,
     },
     body:{
-        marginTop:20
     },
     textLabel:{
         fontSize:14

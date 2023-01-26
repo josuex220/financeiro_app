@@ -10,7 +10,11 @@ export default function ButtonCustom(props) {
         'GilroyRegular' : require('../../assets/fonts/Gilroy-Regular.ttf'),
         'GilroySemiBold' : require('../../assets/fonts/Gilroy-SemiBold.ttf'),
     });
-  const { onPress, title = 'Login', backgroundColor = '#2A64D9', textColor='#fff'} = props;
+  var backgroundColor = props.backgroundColor ? props.backgroundColor : '#2A64D9';
+  const { onPress, title = 'Login', textColor='#fff', disabled=false} = props;
+  if(disabled){
+    backgroundColor = "#6f9cf9";
+  }
   return (
     <Pressable style={[styles.button,{backgroundColor:backgroundColor}]} onPress={onPress}>
       <Text style={[styles.text, {color:textColor}]}>{title}</Text>

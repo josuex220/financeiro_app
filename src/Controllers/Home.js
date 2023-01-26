@@ -404,7 +404,6 @@ const allStyle = StyleSheet.create({
     },
     body:{
         height:'100%',
-        marginTop:20,
         backgroundColor:'#FAFAFA'
     }
     
